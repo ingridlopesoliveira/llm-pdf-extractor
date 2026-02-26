@@ -7,5 +7,7 @@ export class FilesService {
 
   async processFile(filePath: string): Promise<any> {
     const extracted = await this.llmService.extractInvoice(filePath)
+    console.log('Extracted data:', extracted)
+    return extracted
   }
 }

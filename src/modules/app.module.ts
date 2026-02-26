@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { FilesController } from 'src/controller/files.controller'
-import { FilesService } from 'src/services/files.service'
-import { LlmService } from 'src/services/llm.service'
+import { FilesModule } from 'src/modules/files.module'
 import configuration from '../configuration/configuration'
 
 @Module({
@@ -26,8 +24,7 @@ import configuration from '../configuration/configuration'
         synchronize: true,
       }),
     }),
+    FilesModule,
   ],
-  controllers: [FilesController],
-  providers: [LlmService, FilesService],
 })
 export class AppModule {}
