@@ -1,15 +1,17 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 import { ResponseDTO } from 'src/dtos/response-dto'
+import { type InvoicesQueryDto, invoicesQuerySchema } from 'src/schema/invoice-query.schema'
+import { ZodValidationPipe } from 'src/schema/validation/zod-invoice.validation'
 import { FilesService } from 'src/services/files.service'
 
-@Controller()
+@Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Post('upload')
+  @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(
     FileInterceptor('files', {
@@ -42,10 +44,10 @@ export class FilesController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('files')
-  async getFilesData() {
+  @Get()
+  async getFilesData(@Query(new ZodValidationPipe(invoicesQuerySchema)) query: InvoicesQueryDto) {
     try {
-      const response = await this.filesService.getFilesData()
+      const response = await this.filesService.getFilesData(query)
       return new ResponseDTO(HttpStatus.OK, 'Dados dos arquivos obtidos com sucesso', response)
     } catch (err) {
       throw new BadRequestException('Erro ao obter os dados dos arquivos', err.message)

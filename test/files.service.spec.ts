@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { InvoiceDTO } from '../src/dtos/invoice.dto'
+import { InvoiceExtractedDTO } from '../src/dtos/invoice/invoice-extracted.dto'
 import { InvoicesRepository } from '../src/repositories/invoice.repository'
 import { FilesService } from '../src/services/files.service'
 import { LlmServiceMock } from '../src/services/llm-mock.service'
@@ -31,7 +31,7 @@ describe('FilesService', () => {
       ilumPublica: 30,
     } as Invoice
 
-    const dto: InvoiceDTO = (service as any).processExtractedDataValues(invoice)
+    const dto: InvoiceExtractedDTO = (service as any).processExtractedDataValues(invoice)
     expect(dto.energyConsume).toBe(30) // 10 + 20
     expect(dto.energyCompensated).toBe(5)
     expect(dto.totalValueWithoutGd).toBe(330) // 100 + 200 + 30
@@ -56,7 +56,7 @@ describe('FilesService', () => {
     const result = await service.processFile('/tmp/foo.pdf')
 
     expect(llmMock.extractInvoice).toHaveBeenCalledWith('/tmp/foo.pdf')
-    expect(repo.create).toHaveBeenCalledWith(expect.any(InvoiceDTO))
+    expect(repo.create).toHaveBeenCalledWith(expect.any(InvoiceExtractedDTO))
     expect(result).toBe(saved)
   })
 

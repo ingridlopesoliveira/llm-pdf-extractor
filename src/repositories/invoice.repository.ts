@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { InvoiceDTO } from 'src/dtos/invoice.dto'
+import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoiceEntity } from 'src/entities/invoice-entity'
-import { Repository } from 'typeorm'
+import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
+import { FindManyOptions, ILike, Repository } from 'typeorm'
 
 @Injectable()
 export class InvoicesRepository {
@@ -11,12 +12,25 @@ export class InvoicesRepository {
     private readonly repository: Repository<InvoiceEntity>,
   ) {}
 
-  async create(data: InvoiceDTO): Promise<InvoiceEntity> {
+  async create(data: InvoiceExtractedDTO): Promise<InvoiceEntity> {
     const invoice = this.repository.create(data)
     return this.repository.save(invoice)
   }
 
-  async findAll(): Promise<InvoiceEntity[]> {
-    return this.repository.find()
+  async findAll(query: InvoicesQueryDto): Promise<InvoiceEntity[]> {
+    const where: FindManyOptions<InvoiceEntity>['where'] = {}
+
+    if (query.month) {
+      where.month = query.month
+    }
+    if (query.client) {
+      where.client = ILike(`%${query.client}%`)
+    }
+
+    return this.repository.find({
+      skip: (query.page - 1) * query.pageSize,
+      take: query.pageSize,
+      where,
+    })
   }
 }

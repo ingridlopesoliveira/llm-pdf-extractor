@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { InvoiceDTO } from 'src/dtos/invoice.dto'
+import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
+import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
 import { LlmServiceMock } from 'src/services/llm-mock.service'
 import { Invoice } from 'src/types/invoice.type'
 
@@ -19,14 +20,15 @@ export class FilesService {
     return invoice
   }
 
-  private processExtractedDataValues(extracted: Invoice): InvoiceDTO {
+  private processExtractedDataValues(extracted: Invoice): InvoiceExtractedDTO {
     const energyConsume = extracted.energia.kwh + extracted.energiaSceeeSIcms.kwh
     const energyCompensated = extracted.energiaCompensadaGdI.kwh
     const totalValueWithoutGd = extracted.energia.valor + extracted.energiaSceeeSIcms.valor + extracted.ilumPublica
-    return new InvoiceDTO(extracted, energyConsume, energyCompensated, totalValueWithoutGd)
+    return new InvoiceExtractedDTO(extracted, energyConsume, energyCompensated, totalValueWithoutGd)
   }
 
-  async getFilesData() {
-    return await this.invoicesRepository.findAll()
+  async getFilesData(query: InvoicesQueryDto) {
+    const response = await this.invoicesRepository.findAll(query)
+    return response
   }
 }

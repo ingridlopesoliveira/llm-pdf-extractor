@@ -1,6 +1,6 @@
 import { Invoice } from 'src/types/invoice.type'
 
-export class InvoiceDTO {
+export class InvoiceExtractedDTO {
   fileName: string
   client: string
   month: string

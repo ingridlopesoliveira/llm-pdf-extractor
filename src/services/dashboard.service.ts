@@ -6,6 +6,6 @@ export class DashboardService {
   constructor(private invoicesRepository: InvoicesRepository) {}
 
   async getFilesData() {
-    const invoicesEntities = await this.invoicesRepository.findAll()
+    // const invoicesEntities = await this.invoicesRepository.findAll()
   }
 }
