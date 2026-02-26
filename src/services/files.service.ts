@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InvoiceDTO } from 'src/dtos/invoice-dto'
+import { InvoiceDTO } from 'src/dtos/invoice.dto'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
 import { LlmServiceMock } from 'src/services/llm-mock.service'
 import { Invoice } from 'src/types/invoice.type'
