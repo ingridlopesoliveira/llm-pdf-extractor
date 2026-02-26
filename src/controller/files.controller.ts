@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
@@ -32,5 +32,10 @@ export class FilesController {
   )
   async upload(@UploadedFile() file: Express.Multer.File) {
     return this.filesService.processFile(file.path)
+  }
+
+  @Get('files')
+  async getFilesData() {
+    return this.filesService.getFilesData()
   }
 }
