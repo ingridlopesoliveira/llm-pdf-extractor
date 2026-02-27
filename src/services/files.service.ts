@@ -18,20 +18,15 @@ export class FilesService {
 
   async processFile(filePath: string): Promise<any> {
     const extracted = await this.llmService.extractInvoice(filePath)
-    console.log('Extracted data:', extracted)
 
     const clientDTO = new ClientDTO(extracted.nomeCliente, extracted.numeroCliente)
     const existingClient = await this.clientsRepository.findOneByClienteNumber(clientDTO.clientNumber)
-    if (!existingClient) {
-      console.log('Creating new client:', clientDTO)
-      await this.clientsRepository.create(clientDTO)
-    }
-    const clientId = existingClient ? existingClient.clientNumber : clientDTO.clientNumber
+    if (!existingClient) await this.clientsRepository.create(clientDTO)
 
+    const clientId = existingClient ? existingClient.clientNumber : clientDTO.clientNumber
     const invoiceDTO = this.processExtractedDataValues(extracted, clientId)
-    console.log('Processed Invoice DTO:', invoiceDTO)
-    const invoice = await this.invoicesRepository.create(invoiceDTO)
-    return invoice
+    const invoiceEntity = await this.invoicesRepository.create(invoiceDTO)
+    return invoiceEntity
   }
 
   private processExtractedDataValues(extracted: Invoice, clientId: number): InvoiceExtractedDTO {

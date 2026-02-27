@@ -13,7 +13,6 @@ export class ClientRepository {
 
   async create(data: ClientDTO): Promise<ClientEntity> {
     const client = this.repository.create(data)
-    console.log('Saving client to database:', client)
     return this.repository.save(client)
   }
 

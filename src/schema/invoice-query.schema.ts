@@ -7,7 +7,7 @@ export const invoicesQuerySchema = z
     pageSize: z.coerce.number().min(1).max(100).default(10),
 
     month: z.string().optional(),
-    client: z.string().optional(),
+    client: z.coerce.number().optional(),
   })
   .strict()
 
