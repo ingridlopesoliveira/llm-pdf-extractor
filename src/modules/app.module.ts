@@ -22,7 +22,7 @@ import configuration from '../configuration/configuration'
         password: config.get('database.password'),
         database: config.get('database.name'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     FilesModule,

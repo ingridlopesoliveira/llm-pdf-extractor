@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
+import { ClientDTO } from 'src/dtos/client/client.dto'
 import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoiceListDTO } from 'src/dtos/invoice/invoice-list.dto'
+import { ClientRepository } from 'src/repositories/client.repository'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
 import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
 import { LlmServiceMock } from 'src/services/llm-mock.service'
@@ -11,21 +13,32 @@ export class FilesService {
   constructor(
     private llmService: LlmServiceMock,
     private invoicesRepository: InvoicesRepository,
+    private clientsRepository: ClientRepository,
   ) {}
 
   async processFile(filePath: string): Promise<any> {
     const extracted = await this.llmService.extractInvoice(filePath)
     console.log('Extracted data:', extracted)
-    const invoiceDTO = this.processExtractedDataValues(extracted)
+
+    const clientDTO = new ClientDTO(extracted.nomeCliente, extracted.numeroCliente)
+    const existingClient = await this.clientsRepository.findOneByClienteNumber(clientDTO.clientNumber)
+    if (!existingClient) {
+      console.log('Creating new client:', clientDTO)
+      await this.clientsRepository.create(clientDTO)
+    }
+    const clientId = existingClient ? existingClient.clientNumber : clientDTO.clientNumber
+
+    const invoiceDTO = this.processExtractedDataValues(extracted, clientId)
+    console.log('Processed Invoice DTO:', invoiceDTO)
     const invoice = await this.invoicesRepository.create(invoiceDTO)
     return invoice
   }
 
-  private processExtractedDataValues(extracted: Invoice): InvoiceExtractedDTO {
+  private processExtractedDataValues(extracted: Invoice, clientId: number): InvoiceExtractedDTO {
     const energyConsume = extracted.energia.kwh + extracted.energiaSceeeSIcms.kwh
     const energyCompensated = extracted.energiaCompensadaGdI.kwh
     const totalValueWithoutGd = extracted.energia.valor + extracted.energiaSceeeSIcms.valor + extracted.ilumPublica
-    return new InvoiceExtractedDTO(extracted, energyConsume, energyCompensated, totalValueWithoutGd)
+    return new InvoiceExtractedDTO(extracted, energyConsume, energyCompensated, totalValueWithoutGd, clientId)
   }
 
   async getFilesData(query: InvoicesQueryDto): Promise<InvoiceListDTO[]> {

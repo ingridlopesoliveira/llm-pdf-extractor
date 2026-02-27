@@ -1,6 +1,7 @@
 export type Invoice = {
   fileName: string
-  cliente: string
+  numeroCliente: number
+  nomeCliente: string
   mesReferencia: string
   energia: {
     kwh: number

@@ -8,7 +8,8 @@ export class LlmServiceMock {
   async extractInvoice(filePath: string): Promise<Invoice> {
     return {
       fileName: filePath,
-      cliente: '7202210726',
+      numeroCliente: 7204076117,
+      nomeCliente: 'Ingrid novo',
       mesReferencia: 'SET-2024',
       energia: {
         kwh: 100,
