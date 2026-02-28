@@ -34,7 +34,7 @@ describe('FilesController', () => {
   it('getFilesData returns the service value', async () => {
     const arr = [{ id: 1 }]
     service.getFilesData.mockResolvedValue(arr as any)
-    await expect(controller.getFilesData()).resolves.toBe(arr)
+    await expect(controller.getFilesData({ page: 1, pageSize: 10 })).resolves.toBe(arr)
   })
 
   it('file filter rejects non-PDF and accepts PDF', () => {
