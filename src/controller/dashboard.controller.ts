@@ -9,7 +9,18 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Get('/by-month')
+  @Get()
+  async getTotals(@Query(new ZodValidationPipe(dashboardQuerySchema)) query: DashboardQueryDto) {
+    try {
+      const response = await this.dashboardService.getTotals(query)
+      return new ResponseDTO(HttpStatus.OK, 'Valores totais consultados com sucesso', response)
+    } catch (err) {
+      throw new BadRequestException('Erro ao obter os dados', err.message)
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('by-month')
   async getAggregatedDataByMonth(@Query(new ZodValidationPipe(dashboardQuerySchema)) query: DashboardQueryDto) {
     try {
       const response = await this.dashboardService.aggregatedValuesByMonth(query)

@@ -17,24 +17,25 @@ describe('FilesController', () => {
     service = module.get(FilesService) as jest.Mocked<FilesService>
   })
 
-  it('upload forwards path to service and returns result', async () => {
+  it('upload forwards path to service and returns ResponseDTO', async () => {
     const file = { path: '/tmp/file.pdf' } as Express.Multer.File
-    service.processFile.mockResolvedValue({ ok: true })
+    const payload = { ok: true }
+    service.processFile.mockResolvedValue(payload)
 
     const result = await controller.upload(file)
     expect(service.processFile).toHaveBeenCalledWith('/tmp/file.pdf')
-    expect(result).toEqual({ ok: true })
+    expect(result).toEqual({ statusCode: 201, message: 'Arquivo processado com sucesso', data: payload })
   })
 
   it('upload propagates service errors', async () => {
     service.processFile.mockRejectedValue(new Error('boom'))
-    await expect(controller.upload({ path: '/tmp/x' } as any)).rejects.toThrow('boom')
+    await expect(controller.upload({ path: '/tmp/x' } as any)).rejects.toThrow('Erro ao processar o arquivo')
   })
 
-  it('getFilesData returns the service value', async () => {
+  it('getFilesData returns the service value wrapped', async () => {
     const arr = [{ id: 1 }]
     service.getFilesData.mockResolvedValue(arr as any)
-    await expect(controller.getFilesData({ page: 1, pageSize: 10 })).resolves.toBe(arr)
+    await expect(controller.getFilesData({ page: 1, pageSize: 10 })).resolves.toEqual({ statusCode: 200, message: 'Dados dos arquivos obtidos com sucesso', data: arr })
   })
 
   it('file filter rejects non-PDF and accepts PDF', () => {
@@ -52,5 +53,10 @@ describe('FilesController', () => {
     cb.mockClear()
     filter(null, { mimetype: 'application/pdf' } as any, cb)
     expect(cb).toHaveBeenCalledWith(null, true)
+  })
+
+  it('getFilesData propagates errors', async () => {
+    service.getFilesData.mockRejectedValue(new Error('oops'))
+    await expect(controller.getFilesData({ page: 1, pageSize: 10 })).rejects.toThrow('Erro ao obter os dados dos arquivos')
   })
 })

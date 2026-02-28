@@ -18,7 +18,5 @@ export function convertStringToDate(str: string): Date {
   const year = parseInt(y)
   const month = dict[m]
 
-  const a = new Date(year, month, 1)
-  console.log(str, a)
-  return a
+  return new Date(year, month, 1)
 }

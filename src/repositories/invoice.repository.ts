@@ -19,15 +19,22 @@ export class InvoicesRepository {
     return this.repository.save(invoice)
   }
 
-  async findAll(query: InvoicesQueryDto): Promise<InvoiceEntity[]> {
+  async findAll(query: InvoicesQueryDto, includes?: Array<string>): Promise<InvoiceEntity[]> {
     const where: FindManyOptions<InvoiceEntity>['where'] = {}
-    if (query.month) where.month = convertStringToDate(query.month)
+    if (query.month) {
+      const converted = convertStringToDate(query.month)
+      if ((converted as any) === 'Invalid Date') {
+        console.log('mandei uma data invalida')
+      }
+      where.month = convertStringToDate(query.month)
+    }
     if (query.client) where.client = { clientNumber: Number(query.client) }
 
     return this.repository.find({
       skip: (query.page - 1) * query.pageSize,
       take: query.pageSize,
       where,
+      relations: includes,
     })
   }
 
@@ -46,5 +53,20 @@ export class InvoicesRepository {
     if (client) qb.andWhere('ie.clientId = :client', { client })
 
     return qb.getRawMany()
+  }
+
+  async getTotals(query: DashboardQueryDto): Promise<any> {
+    const { client, month } = query
+    const qb: SelectQueryBuilder<InvoiceEntity> = this.repository.createQueryBuilder('ie')
+
+    qb.select('SUM(ie.economyGd)', 'totalEconomyGd')
+      .addSelect('SUM(ie.totalValueWithoutGd)', 'totalValueWithoutGd')
+      .addSelect('SUM(ie.energyCompensated)', 'totalEnergyCompensated')
+      .addSelect('SUM(ie.energyConsume)', 'totalEnergyConsume')
+
+    if (month) qb.andWhere('ie.month = :month', { month: convertStringToDate(month) })
+    if (client) qb.andWhere('ie.clientId = :client', { client })
+
+    return qb.getRawOne()
   }
 }

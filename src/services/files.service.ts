@@ -37,7 +37,7 @@ export class FilesService {
   }
 
   async getFilesData(query: InvoicesQueryDto): Promise<InvoiceListDTO[]> {
-    const response = await this.invoicesRepository.findAll(query)
+    const response = await this.invoicesRepository.findAll(query, ['client'])
     return response.map((invoice) => new InvoiceListDTO(invoice))
   }
 }

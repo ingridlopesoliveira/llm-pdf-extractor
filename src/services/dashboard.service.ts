@@ -33,4 +33,9 @@ export class DashboardService {
 
     return aggregatedValues.map((it) => new ListAggregatedInvoicesDTO(it))
   }
+
+  async getTotals(query: DashboardQueryDto): Promise<ListAggregatedInvoicesDTO> {
+    const aggregatedValues = await this.invoicesRepository.getTotals(query)
+    return new ListAggregatedInvoicesDTO(aggregatedValues)
+  }
 }

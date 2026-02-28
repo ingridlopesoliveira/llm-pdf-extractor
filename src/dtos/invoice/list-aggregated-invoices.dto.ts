@@ -1,5 +1,5 @@
 export class ListAggregatedInvoicesDTO {
-  mes: string
+  mes: string | undefined
   resultados_energia: {
     energia_consumida: number
     energia_conpensada: number
@@ -10,10 +10,11 @@ export class ListAggregatedInvoicesDTO {
   }
 
   constructor(invoice: RawDataAggregated) {
-    this.mes = new Date(invoice.month).toLocaleDateString('pt-br', {
-      year: 'numeric',
-      month: 'long',
-    })
+    if (invoice.month)
+      this.mes = new Date(invoice.month).toLocaleDateString('pt-br', {
+        year: 'numeric',
+        month: 'long',
+      })
     this.resultados_energia = {
       energia_conpensada: invoice.totalEnergyCompensated,
       energia_consumida: invoice.totalEnergyConsume,
@@ -26,7 +27,7 @@ export class ListAggregatedInvoicesDTO {
 }
 
 type RawDataAggregated = {
-  month: string
+  month: string | undefined
   totalEconomyGd: number
   totalValueWithoutGd: number
   totalEnergyCompensated: number
