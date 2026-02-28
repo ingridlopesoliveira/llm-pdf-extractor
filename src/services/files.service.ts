@@ -5,13 +5,13 @@ import { InvoiceListDTO } from 'src/dtos/invoice/invoice-list.dto'
 import { ClientRepository } from 'src/repositories/client.repository'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
 import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
-import { LlmServiceMock } from 'src/services/llm-mock.service'
+import { LLMService } from 'src/services/llm.service'
 import { Invoice } from 'src/types/invoice.type'
 
 @Injectable()
 export class FilesService {
   constructor(
-    private llmService: LlmServiceMock,
+    private llmService: LLMService,
     private invoicesRepository: InvoicesRepository,
     private clientsRepository: ClientRepository,
   ) {}

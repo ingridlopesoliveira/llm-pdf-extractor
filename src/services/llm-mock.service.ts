@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
+import { LLMService } from 'src/services/llm.service'
 import { Invoice } from 'src/types/invoice.type'
 
 @Injectable()
-export class LlmServiceMock {
+export class LlmServiceMock implements LLMService {
   constructor() {}
 
   async extractInvoice(filePath: string): Promise<Invoice> {
