@@ -10,7 +10,7 @@ export class LlmServiceMock {
       fileName: filePath,
       numeroCliente: 7204076117,
       nomeCliente: 'Ingrid novo',
-      mesReferencia: 'SET-2024',
+      mesReferencia: 'SET/2024',
       energia: {
         kwh: 100,
         valor: 1200,

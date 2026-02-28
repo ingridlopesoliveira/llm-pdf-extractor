@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoiceEntity } from 'src/entities/invoice-entity'
 import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
+import { convertStringToDate } from 'src/utils/convert-string-to-date'
 import { FindManyOptions, Repository } from 'typeorm'
 
 @Injectable()
@@ -19,7 +20,7 @@ export class InvoicesRepository {
 
   async findAll(query: InvoicesQueryDto): Promise<InvoiceEntity[]> {
     const where: FindManyOptions<InvoiceEntity>['where'] = {}
-    if (query.month) where.month = query.month
+    if (query.month) where.month = convertStringToDate(query.month)
     if (query.client) where.client = { clientNumber: Number(query.client) }
 
     return this.repository.find({

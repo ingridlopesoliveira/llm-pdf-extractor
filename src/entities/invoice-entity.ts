@@ -12,8 +12,8 @@ export class InvoiceEntity {
   @Column({ name: 'client_id', type: 'int8', nullable: true })
   clientId: number
 
-  @Column({ name: 'month', type: 'character varying' })
-  month: string
+  @Column({ name: 'month', type: 'timestamp with time zone' })
+  month: Date
 
   @Column({ name: 'energy_consume', type: 'int' })
   energyConsume: number

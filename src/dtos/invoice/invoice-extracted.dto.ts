@@ -1,8 +1,9 @@
 import { Invoice } from 'src/types/invoice.type'
+import { convertStringToDate } from 'src/utils/convert-string-to-date'
 
 export class InvoiceExtractedDTO {
   fileName: string
-  month: string
+  month: Date
   energyConsume: number
   energyCompensated: number
   totalValueWithoutGd: number
@@ -11,7 +12,7 @@ export class InvoiceExtractedDTO {
 
   constructor(invoice: Invoice, energyConsume: number, energyCompensated: number, totalValueWithoutGd: number, clientId: number) {
     this.fileName = invoice.fileName
-    this.month = invoice.mesReferencia
+    this.month = convertStringToDate(invoice.mesReferencia)
     this.energyConsume = energyConsume
     this.energyCompensated = energyCompensated
     this.totalValueWithoutGd = totalValueWithoutGd
