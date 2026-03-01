@@ -93,20 +93,22 @@ curl -X POST http://localhost:3000/files \
 ```
 
 Resposta:
+```json
 {
-"statusCode": 201,
-"message": "Arquivo processado com sucesso",
-"data": {
-"fileName": "fatura.pdf",
-"numeroCliente": 123456,
-"nomeCliente": "Maria Silva",
-"mesReferencia": "2024-01",
-"energia": {
-"kwh": 350,
-"valor": 289.90
+  "statusCode": 201,
+  "message": "Arquivo processado com sucesso",
+  "data": {
+    "id": 17,
+    "fileName": "uploads/1772399344385-858936345.pdf",
+    "clientId": "7204076117",
+    "month": "2024-09-01T03:00:00.000Z",
+    "energyConsume": 250,
+    "energyCompensated": 0,
+    "totalValueWithoutGd": 2440,
+    "economyGd": 0
+  }
 }
-}
-}
+```
 
 ## GET /files
 
@@ -115,31 +117,189 @@ Lista arquivos processados.
 Query params suportados:
 
 - Paginação:
-  page
-  pageSize
+  - page: number
+  - pageSize: number
 - Filtros:
-  numeroCliente
-  mesReferencia
+  - client: number - filtro referente ao campo numero_do_cliente
+  - month: string - filtro referente ao campo mês_de_referencia ex: FEV/2024
 
 Exemplo:
 
 ```
-curl "http://localhost:3000/files?page=1&pageSize=10"
+curl "http://localhost:3000/files?page=1&pageSize=20&client=7204076117&month=SET/2024"
 ```
+
+Resposta:
+
+```json
+{
+    "statusCode": 200,
+    "message": "Dados dos arquivos obtidos com sucesso",
+    "data": [
+        {
+            "nome_do_arquivo_processado": "uploads/1772234283713-390774394.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        },
+        {
+            "nome_do_arquivo_processado": "uploads/1772281267521-957613123.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        },
+        {
+            "nome_do_arquivo_processado": "uploads/.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        },
+        {
+            "nome_do_arquivo_processado": "uploads/1772308673773-753515988.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        },
+        {
+            "nome_do_arquivo_processado": "uploads/1772308746578-521448920.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        },
+        {
+            "nome_do_arquivo_processado": "uploads/1772399344385-858936345.pdf",
+            "numero_do_cliente": "7204076117",
+            "mes_referencia": "setembro de 2024",
+            "nome_do_cliente": "Ingrid novo",
+            "energia_consumida": 250,
+            "energia_conpensada": 0,
+            "valor_total_sem_gd": 2440,
+            "economia_gd": 0
+        }
+    ]
+}
+``` 
 
 ### GET /dashboard
 
-Retorna valores totais consolidados.
+Retorna valores totais consolidados. Permite filtros de mês e de cliente.
 
 ```
-curl "http://localhost:3000/dashboard"
+curl "http://localhost:3000/dashboard/?client=7202210726&month=SET/2024"
+```
+
+Resposta:
+
+```json
+{
+    "statusCode": 200,
+    "message": "Valores totais consultados com sucesso",
+    "data": {
+        "resultados_energia": {
+            "energia_conpensada": "0",
+            "energia_consumida": "3250"
+        },
+        "resultados_financeiros": {
+            "valor_total_sem_gd": 31720,
+            "economia_gd": 0
+        }
+    }
+}
+
 ```
 
 ## GET /dashboard/by-month
 
 Retorna valores agregados por mês.
+Posso retornar os valores de duas formas, com base no parametro na rota: 
+- visualizeOnDashboard: ele permite retornar os dados agrupados em arrays para facilidar a integração em libs de gráficos como a ApexChart
 
 ```
 curl "http://localhost:3000/dashboard/by-month"
+```
 
+Resposta: 
+```json
+{
+    "statusCode": 200,
+    "message": "Valores agregados por mês consultados com sucesso",
+    "data": [
+        {
+            "mes": "setembro de 2024",
+            "resultados_energia": {
+                "energia_conpensada": "0",
+                "energia_consumida": "3000"
+            },
+            "resultados_financeiros": {
+                "valor_total_sem_gd": 29280,
+                "economia_gd": 0
+            }
+        },
+        {
+            "mes": "outubro de 2024",
+            "resultados_energia": {
+                "energia_conpensada": "0",
+                "energia_consumida": "250"
+            },
+            "resultados_financeiros": {
+                "valor_total_sem_gd": 2440,
+                "economia_gd": 0
+            }
+        }
+    ]
+}
+```
+
+```
+curl "http://localhost:3000/dashboard/by-month?visualizeOnDashboard=true"
+```
+
+Resposta:
+```json
+{
+    "statusCode": 200,
+    "message": "Valores agregados por mês consultados com sucesso",
+    "data": {
+        "mes": [
+            "2024-09-01T00:00:00.000-03:00",
+            "2024-10-01T00:00:00.000-03:00"
+        ],
+        "energia_consumida": [
+            3000,
+            250
+        ],
+        "energia_conpensada": [
+            0,
+            0
+        ],
+        "valor_total_sem_gd": [
+            29280,
+            2440
+        ],
+        "economia_gd": [
+            0,
+            0
+        ]
+    }
+}
 ```
