@@ -16,13 +16,12 @@ import configuration from '../configuration/configuration'
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        host: config.get('database.host'),
-        port: config.get('database.port'),
-        username: config.get('database.user'),
-        password: config.get('database.password'),
-        database: config.get('database.name'),
+        url: process.env.DATABASE_URL,
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     FilesModule,
