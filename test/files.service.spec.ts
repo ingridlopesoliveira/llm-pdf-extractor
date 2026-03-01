@@ -50,7 +50,6 @@ describe('FilesService', () => {
       ilumPublica: 40,
     } as Invoice
 
-    // pass a dummy client id just to satisfy signature
     const dto: InvoiceExtractedDTO = (service as any).processExtractedDataValues(invoice, 42)
     expect(dto.energyConsume).toBe(250)
     expect(dto.energyCompensated).toBe(0)

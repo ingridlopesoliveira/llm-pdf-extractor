@@ -5,7 +5,6 @@ import { App } from 'supertest/types'
 import { AppModule } from '../src/modules/app.module'
 import { FilesService } from '../src/services/files.service'
 
-// simple helper buffer that looks like the start of a PDF
 const pdfBuffer = Buffer.from('%PDF-1.4\n%âãÏÓ\n')
 
 describe('AppController (e2e)', () => {
