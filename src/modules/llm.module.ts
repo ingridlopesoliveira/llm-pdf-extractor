@@ -12,7 +12,7 @@ import { LLMService } from 'src/services/llm.service'
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         return new OpenAI({
-          apiKey: config.get<string>('OPENAI_API_KEY'),
+          apiKey: config.get<string>('openai.apiKey'),
         })
       },
     },

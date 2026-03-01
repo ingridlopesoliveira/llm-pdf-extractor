@@ -16,7 +16,7 @@ import configuration from '../configuration/configuration'
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        url: process.env.DATABASE_URL,
+        url: config.get('database.url'),
         autoLoadEntities: true,
         synchronize: true,
         ssl: {
