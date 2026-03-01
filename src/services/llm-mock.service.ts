@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { randomInt } from 'crypto'
 import { LLMService } from 'src/services/llm.service'
 import { Invoice } from 'src/types/invoice.type'
 
@@ -9,22 +10,22 @@ export class LlmServiceMock implements LLMService {
   async extractInvoice(filePath: string): Promise<Invoice> {
     return {
       fileName: filePath,
-      numeroCliente: 7204076117,
-      nomeCliente: 'Ingrid novo',
-      mesReferencia: 'SET/2024',
+      numeroCliente: randomInt(11),
+      nomeCliente: 'Ingrid Lopes',
+      mesReferencia: 'OUT/2024',
       energia: {
         kwh: 100,
-        valor: 1200,
+        valor: 104.81,
       },
       energiaSceeeSIcms: {
-        kwh: 150,
-        valor: 1200,
+        kwh: 1860,
+        valor: 1081.12,
       },
       energiaCompensadaGdI: {
-        kwh: 0,
-        valor: 0,
+        kwh: 1860,
+        valor: -1044.37,
       },
-      ilumPublica: 40,
+      ilumPublica: 47.57,
     } as Invoice
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ListAggregatedInvoicesForDashboardDTO } from 'src/dtos/invoice/list-aggregated-invoices-for-dashboard.dto'
 import { ListAggregatedInvoicesDTO } from 'src/dtos/invoice/list-aggregated-invoices.dto'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
@@ -6,9 +6,13 @@ import { DashboardQueryDto } from 'src/schema/dashboard-query.schema'
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = new Logger(DashboardService.name)
+
   constructor(private invoicesRepository: InvoicesRepository) {}
 
   async aggregatedValuesByMonth(query: DashboardQueryDto): Promise<ListAggregatedInvoicesForDashboardDTO | ListAggregatedInvoicesDTO[]> {
+    this.logger.log('Recieved request to aggreagted values by month')
+
     const aggregatedValues = await this.invoicesRepository.getAggregatedValues(query)
 
     if (query.visualizeOnDashboard) {
@@ -35,6 +39,8 @@ export class DashboardService {
   }
 
   async getTotals(query: DashboardQueryDto): Promise<ListAggregatedInvoicesDTO> {
+    this.logger.log('Recieved request to get totals values')
+
     const aggregatedValues = await this.invoicesRepository.getTotals(query)
     return new ListAggregatedInvoicesDTO(aggregatedValues)
   }

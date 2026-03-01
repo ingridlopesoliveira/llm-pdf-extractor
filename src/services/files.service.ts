@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ClientDTO } from 'src/dtos/client/client.dto'
 import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoiceListDTO } from 'src/dtos/invoice/invoice-list.dto'
@@ -11,6 +11,7 @@ import { Invoice } from 'src/types/invoice.type'
 
 @Injectable()
 export class FilesService {
+  private readonly logger = new Logger(FilesService.name)
   constructor(
     private llmService: LLMService,
     private invoicesRepository: InvoicesRepository,
@@ -18,6 +19,7 @@ export class FilesService {
   ) {}
 
   async processFile(filePath: string): Promise<any> {
+    this.logger.log('Recieved file and sending to llm service')
     const extracted = await this.llmService.extractInvoice(filePath)
 
     const result = InvoiceSchema.safeParse(extracted)
@@ -28,11 +30,15 @@ export class FilesService {
 
     const clientDTO = new ClientDTO(invoice.nomeCliente, invoice.numeroCliente)
     const existingClient = await this.clientsRepository.findOneByClienteNumber(clientDTO.clientNumber)
-    if (!existingClient) await this.clientsRepository.create(clientDTO)
+    if (!existingClient) {
+      this.logger.log('Client not found, creating new one')
+      await this.clientsRepository.create(clientDTO)
+    }
 
     const clientId = existingClient ? existingClient.clientNumber : clientDTO.clientNumber
     const invoiceDTO = this.processExtractedDataValues(invoice, clientId)
     const invoiceEntity = await this.invoicesRepository.create(invoiceDTO)
+    this.logger.log('Invoice created')
     return invoiceEntity
   }
 
@@ -44,6 +50,7 @@ export class FilesService {
   }
 
   async getFilesData(query: InvoicesQueryDto): Promise<InvoiceListDTO[]> {
+    this.logger.log('Recieved request to find invoices files')
     const response = await this.invoicesRepository.findAll(query, ['client'])
     return response.map((invoice) => new InvoiceListDTO(invoice))
   }
