@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { HealthController } from 'src/controller/health.controller'
 import { DashboardModule } from 'src/modules/dashboard.module'
 import { FilesModule } from 'src/modules/files.module'
 import configuration from '../configuration/configuration'
@@ -26,6 +27,7 @@ import configuration from '../configuration/configuration'
     }),
     FilesModule,
     DashboardModule,
+    HealthController,
   ],
 })
 export class AppModule {}

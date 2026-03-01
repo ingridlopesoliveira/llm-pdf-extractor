@@ -67,15 +67,8 @@ A integração foi abstraída por meio de uma interface `LLMService`, permitindo
 
 ```
 PORT=3000
-
-DATABASE_HOST=
-DATABASE_PORT=
-DATABASE_USER=
-DATABASE_PASSWORD=
-DATABASE_NAME=
-
+DATABASE_URL=
 OPENAI_API_KEY=
-
 ENV_MODE=DEV
 ```
 
@@ -88,11 +81,12 @@ Upload e processamento de PDF.
 Exemplo:
 
 ```
-curl -X POST http://localhost:3000/files \
+curl -X POST https://llm-pdf-extractor-production.up.railway.app/files \
   -F "files=@fatura.pdf"
 ```
 
 Resposta:
+
 ```json
 {
   "statusCode": 201,
@@ -126,184 +120,171 @@ Query params suportados:
 Exemplo:
 
 ```
-curl "http://localhost:3000/files?page=1&pageSize=20&client=7204076117&month=SET/2024"
+curl "https://llm-pdf-extractor-production.up.railway.app/files?page=1&pageSize=20&client=7204076117&month=SET/2024"
 ```
 
 Resposta:
 
 ```json
 {
-    "statusCode": 200,
-    "message": "Dados dos arquivos obtidos com sucesso",
-    "data": [
-        {
-            "nome_do_arquivo_processado": "uploads/1772234283713-390774394.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        },
-        {
-            "nome_do_arquivo_processado": "uploads/1772281267521-957613123.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        },
-        {
-            "nome_do_arquivo_processado": "uploads/.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        },
-        {
-            "nome_do_arquivo_processado": "uploads/1772308673773-753515988.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        },
-        {
-            "nome_do_arquivo_processado": "uploads/1772308746578-521448920.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        },
-        {
-            "nome_do_arquivo_processado": "uploads/1772399344385-858936345.pdf",
-            "numero_do_cliente": "7204076117",
-            "mes_referencia": "setembro de 2024",
-            "nome_do_cliente": "Ingrid novo",
-            "energia_consumida": 250,
-            "energia_conpensada": 0,
-            "valor_total_sem_gd": 2440,
-            "economia_gd": 0
-        }
-    ]
+  "statusCode": 200,
+  "message": "Dados dos arquivos obtidos com sucesso",
+  "data": [
+    {
+      "nome_do_arquivo_processado": "uploads/1772234283713-390774394.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    },
+    {
+      "nome_do_arquivo_processado": "uploads/1772281267521-957613123.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    },
+    {
+      "nome_do_arquivo_processado": "uploads/.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    },
+    {
+      "nome_do_arquivo_processado": "uploads/1772308673773-753515988.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    },
+    {
+      "nome_do_arquivo_processado": "uploads/1772308746578-521448920.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    },
+    {
+      "nome_do_arquivo_processado": "uploads/1772399344385-858936345.pdf",
+      "numero_do_cliente": "7204076117",
+      "mes_referencia": "setembro de 2024",
+      "nome_do_cliente": "Ingrid novo",
+      "energia_consumida": 250,
+      "energia_conpensada": 0,
+      "valor_total_sem_gd": 2440,
+      "economia_gd": 0
+    }
+  ]
 }
-``` 
+```
 
 ### GET /dashboard
 
 Retorna valores totais consolidados. Permite filtros de mês e de cliente.
 
 ```
-curl "http://localhost:3000/dashboard/?client=7202210726&month=SET/2024"
+curl "https://llm-pdf-extractor-production.up.railway.app/dashboard/?client=7202210726&month=SET/2024"
 ```
 
 Resposta:
 
 ```json
 {
-    "statusCode": 200,
-    "message": "Valores totais consultados com sucesso",
-    "data": {
-        "resultados_energia": {
-            "energia_conpensada": "0",
-            "energia_consumida": "3250"
-        },
-        "resultados_financeiros": {
-            "valor_total_sem_gd": 31720,
-            "economia_gd": 0
-        }
+  "statusCode": 200,
+  "message": "Valores totais consultados com sucesso",
+  "data": {
+    "resultados_energia": {
+      "energia_conpensada": "0",
+      "energia_consumida": "3250"
+    },
+    "resultados_financeiros": {
+      "valor_total_sem_gd": 31720,
+      "economia_gd": 0
     }
+  }
 }
-
 ```
 
 ## GET /dashboard/by-month
 
 Retorna valores agregados por mês.
-Posso retornar os valores de duas formas, com base no parametro na rota: 
+Posso retornar os valores de duas formas, com base no parametro na rota:
+
 - visualizeOnDashboard: ele permite retornar os dados agrupados em arrays para facilidar a integração em libs de gráficos como a ApexChart
 
 ```
-curl "http://localhost:3000/dashboard/by-month"
-```
-
-Resposta: 
-```json
-{
-    "statusCode": 200,
-    "message": "Valores agregados por mês consultados com sucesso",
-    "data": [
-        {
-            "mes": "setembro de 2024",
-            "resultados_energia": {
-                "energia_conpensada": "0",
-                "energia_consumida": "3000"
-            },
-            "resultados_financeiros": {
-                "valor_total_sem_gd": 29280,
-                "economia_gd": 0
-            }
-        },
-        {
-            "mes": "outubro de 2024",
-            "resultados_energia": {
-                "energia_conpensada": "0",
-                "energia_consumida": "250"
-            },
-            "resultados_financeiros": {
-                "valor_total_sem_gd": 2440,
-                "economia_gd": 0
-            }
-        }
-    ]
-}
-```
-
-```
-curl "http://localhost:3000/dashboard/by-month?visualizeOnDashboard=true"
+curl "https://llm-pdf-extractor-production.up.railway.app/dashboard/by-month"
 ```
 
 Resposta:
+
 ```json
 {
-    "statusCode": 200,
-    "message": "Valores agregados por mês consultados com sucesso",
-    "data": {
-        "mes": [
-            "2024-09-01T00:00:00.000-03:00",
-            "2024-10-01T00:00:00.000-03:00"
-        ],
-        "energia_consumida": [
-            3000,
-            250
-        ],
-        "energia_conpensada": [
-            0,
-            0
-        ],
-        "valor_total_sem_gd": [
-            29280,
-            2440
-        ],
-        "economia_gd": [
-            0,
-            0
-        ]
+  "statusCode": 200,
+  "message": "Valores agregados por mês consultados com sucesso",
+  "data": [
+    {
+      "mes": "setembro de 2024",
+      "resultados_energia": {
+        "energia_conpensada": "0",
+        "energia_consumida": "3000"
+      },
+      "resultados_financeiros": {
+        "valor_total_sem_gd": 29280,
+        "economia_gd": 0
+      }
+    },
+    {
+      "mes": "outubro de 2024",
+      "resultados_energia": {
+        "energia_conpensada": "0",
+        "energia_consumida": "250"
+      },
+      "resultados_financeiros": {
+        "valor_total_sem_gd": 2440,
+        "economia_gd": 0
+      }
     }
+  ]
 }
 ```
-## Diagrama 
+
+```
+curl "https://llm-pdf-extractor-production.up.railway.app/dashboard/by-month?visualizeOnDashboard=true"
+```
+
+Resposta:
+
+```json
+{
+  "statusCode": 200,
+  "message": "Valores agregados por mês consultados com sucesso",
+  "data": {
+    "mes": ["2024-09-01T00:00:00.000-03:00", "2024-10-01T00:00:00.000-03:00"],
+    "energia_consumida": [3000, 250],
+    "energia_conpensada": [0, 0],
+    "valor_total_sem_gd": [29280, 2440],
+    "economia_gd": [0, 0]
+  }
+}
+```
+
+## Diagrama
 
 <img width="823" height="415" alt="image" src="https://github.com/user-attachments/assets/de17062b-ff8c-4474-8d2f-bf74dabb58a0" />
-

@@ -5,6 +5,7 @@ import { InvoiceListDTO } from 'src/dtos/invoice/invoice-list.dto'
 import { ClientRepository } from 'src/repositories/client.repository'
 import { InvoicesRepository } from 'src/repositories/invoice.repository'
 import { InvoicesQueryDto } from 'src/schema/invoice-query.schema'
+import { InvoiceSchema } from 'src/schema/validation/invoice-parse.validation'
 import { LLMService } from 'src/services/llm.service'
 import { Invoice } from 'src/types/invoice.type'
 
@@ -19,12 +20,18 @@ export class FilesService {
   async processFile(filePath: string): Promise<any> {
     const extracted = await this.llmService.extractInvoice(filePath)
 
-    const clientDTO = new ClientDTO(extracted.nomeCliente, extracted.numeroCliente)
+    const result = InvoiceSchema.safeParse(extracted)
+    if (!result.success) throw new Error('LLM retornou um JSON inválido')
+    // TODO:
+    // criar callback de retentativa para extração de informações. Criar fila de gerenciamento usando Redis (ou outro) para processamento posterior
+    const invoice = result.data
+
+    const clientDTO = new ClientDTO(invoice.nomeCliente, invoice.numeroCliente)
     const existingClient = await this.clientsRepository.findOneByClienteNumber(clientDTO.clientNumber)
     if (!existingClient) await this.clientsRepository.create(clientDTO)
 
     const clientId = existingClient ? existingClient.clientNumber : clientDTO.clientNumber
-    const invoiceDTO = this.processExtractedDataValues(extracted, clientId)
+    const invoiceDTO = this.processExtractedDataValues(invoice, clientId)
     const invoiceEntity = await this.invoicesRepository.create(invoiceDTO)
     return invoiceEntity
   }
