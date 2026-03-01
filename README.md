@@ -303,3 +303,7 @@ Resposta:
     }
 }
 ```
+## Diagrama 
+
+<img width="823" height="415" alt="image" src="https://github.com/user-attachments/assets/de17062b-ff8c-4474-8d2f-bf74dabb58a0" />
+
