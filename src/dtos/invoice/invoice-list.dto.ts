@@ -5,6 +5,10 @@ export class InvoiceListDTO {
   numero_do_cliente: string
   mes_referencia: string
   nome_do_cliente: string
+  energia_consumida: number
+  energia_conpensada: number
+  valor_total_sem_gd: number
+  economia_gd: number
 
   constructor(invoice: InvoiceEntity) {
     this.nome_do_arquivo_processado = invoice.fileName
@@ -14,5 +18,9 @@ export class InvoiceListDTO {
       year: 'numeric',
       month: 'long',
     })
+    this.energia_consumida = invoice.energyConsume
+    this.energia_conpensada = invoice.energyCompensated
+    this.valor_total_sem_gd = invoice.totalValueWithoutGd
+    this.economia_gd = invoice.economyGd
   }
 }
