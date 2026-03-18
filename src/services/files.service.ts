@@ -19,7 +19,7 @@ export class FilesService {
   ) {}
 
   async processFile(filePath: string): Promise<any> {
-    this.logger.log('Recieved file and sending to llm service')
+    this.logger.log('Received file, sending to LLM service')
     const extracted = await this.llmService.extractInvoice(filePath)
 
     const result = InvoiceSchema.safeParse(extracted)
@@ -50,7 +50,7 @@ export class FilesService {
   }
 
   async getFilesData(query: InvoicesQueryDto): Promise<InvoiceListDTO[]> {
-    this.logger.log('Recieved request to find invoices files')
+    this.logger.log('Received request to find invoice files')
     const response = await this.invoicesRepository.findAll(query, ['client'])
     return response.map((invoice) => new InvoiceListDTO(invoice))
   }

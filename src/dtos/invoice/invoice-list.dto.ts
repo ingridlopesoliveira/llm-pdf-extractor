@@ -6,7 +6,7 @@ export class InvoiceListDTO {
   mes_referencia: string
   nome_do_cliente: string
   energia_consumida: number
-  energia_conpensada: number
+  energia_compensada: number
   valor_total_sem_gd: number
   economia_gd: number
 
@@ -19,7 +19,7 @@ export class InvoiceListDTO {
       month: 'long',
     })
     this.energia_consumida = invoice.energyConsume
-    this.energia_conpensada = invoice.energyCompensated
+    this.energia_compensada = invoice.energyCompensated
     this.valor_total_sem_gd = invoice.totalValueWithoutGd
     this.economia_gd = invoice.economyGd
   }

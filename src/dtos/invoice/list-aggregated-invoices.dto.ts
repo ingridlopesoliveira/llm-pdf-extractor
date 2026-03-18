@@ -2,7 +2,7 @@ export class ListAggregatedInvoicesDTO {
   mes: string | undefined
   resultados_energia: {
     energia_consumida: number
-    energia_conpensada: number
+    energia_compensada: number
   }
   resultados_financeiros: {
     valor_total_sem_gd: number
@@ -16,7 +16,7 @@ export class ListAggregatedInvoicesDTO {
         month: 'long',
       })
     this.resultados_energia = {
-      energia_conpensada: invoice.totalEnergyCompensated,
+      energia_compensada: invoice.totalEnergyCompensated,
       energia_consumida: invoice.totalEnergyConsume,
     }
     this.resultados_financeiros = {

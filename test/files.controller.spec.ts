@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { FilesController } from '../src/controller/files.controller'
 import { FilesService } from '../src/services/files.service'
@@ -14,7 +14,7 @@ describe('FilesController', () => {
     }).compile()
 
     controller = module.get<FilesController>(FilesController)
-    service = module.get(FilesService) as jest.Mocked<FilesService>
+    service = module.get(FilesService)
   })
 
   it('upload forwards path to service and returns ResponseDTO', async () => {
@@ -27,8 +27,13 @@ describe('FilesController', () => {
     expect(result).toEqual({ statusCode: 201, message: 'Arquivo processado com sucesso', data: payload })
   })
 
-  it('upload propagates service errors', async () => {
+  it('upload throws BadRequestException when no file is provided', async () => {
+    await expect(controller.upload(undefined as any)).rejects.toThrow(BadRequestException)
+  })
+
+  it('upload propagates service errors as InternalServerErrorException', async () => {
     service.processFile.mockRejectedValue(new Error('boom'))
+    await expect(controller.upload({ path: '/tmp/x' } as any)).rejects.toThrow(InternalServerErrorException)
     await expect(controller.upload({ path: '/tmp/x' } as any)).rejects.toThrow('Erro ao processar o arquivo')
   })
 
@@ -55,8 +60,9 @@ describe('FilesController', () => {
     expect(cb).toHaveBeenCalledWith(null, true)
   })
 
-  it('getFilesData propagates errors', async () => {
+  it('getFilesData propagates errors as InternalServerErrorException', async () => {
     service.getFilesData.mockRejectedValue(new Error('oops'))
+    await expect(controller.getFilesData({ page: 1, pageSize: 10 })).rejects.toThrow(InternalServerErrorException)
     await expect(controller.getFilesData({ page: 1, pageSize: 10 })).rejects.toThrow('Erro ao obter os dados dos arquivos')
   })
 })

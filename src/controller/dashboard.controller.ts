@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common'
+import { Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, Query } from '@nestjs/common'
 import { ResponseDTO } from 'src/dtos/response-dto'
 import { type DashboardQueryDto, dashboardQuerySchema } from 'src/schema/dashboard-query.schema'
 import { ZodValidationPipe } from 'src/schema/validation/zod-invoice.validation'
@@ -14,8 +14,9 @@ export class DashboardController {
     try {
       const response = await this.dashboardService.getTotals(query)
       return new ResponseDTO(HttpStatus.OK, 'Valores totais consultados com sucesso', response)
-    } catch (err) {
-      throw new BadRequestException('Erro ao obter os dados', err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new InternalServerErrorException('Erro ao obter os dados', message)
     }
   }
 
@@ -25,8 +26,9 @@ export class DashboardController {
     try {
       const response = await this.dashboardService.aggregatedValuesByMonth(query)
       return new ResponseDTO(HttpStatus.OK, 'Valores agregados por mês consultados com sucesso', response)
-    } catch (err) {
-      throw new BadRequestException('Erro ao obter os dados', err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new InternalServerErrorException('Erro ao obter os dados', message)
     }
   }
 }

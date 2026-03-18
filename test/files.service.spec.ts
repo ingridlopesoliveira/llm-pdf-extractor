@@ -25,8 +25,8 @@ describe('FilesService', () => {
     }).compile()
 
     service = module.get<FilesService>(FilesService)
-    llmMock = module.get(LLMService) as jest.Mocked<LLMService>
-    repo = module.get(InvoicesRepository) as jest.Mocked<InvoicesRepository>
+    llmMock = module.get(LLMService)
+    repo = module.get(InvoicesRepository)
   })
 
   it('computes aggregated values correctly', () => {
