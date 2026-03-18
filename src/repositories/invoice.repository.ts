@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { InvoiceExtractedDTO } from 'src/dtos/invoice/invoice-extracted.dto'
 import { InvoiceEntity } from 'src/entities/invoice-entity'
@@ -9,6 +9,7 @@ import { FindManyOptions, Repository, SelectQueryBuilder } from 'typeorm'
 
 @Injectable()
 export class InvoicesRepository {
+  private readonly logger = new Logger(InvoicesRepository.name)
   constructor(
     @InjectRepository(InvoiceEntity)
     private readonly repository: Repository<InvoiceEntity>,
@@ -23,10 +24,11 @@ export class InvoicesRepository {
     const where: FindManyOptions<InvoiceEntity>['where'] = {}
     if (query.month) {
       const converted = convertStringToDate(query.month)
-      if ((converted as any) === 'Invalid Date') {
-        console.log('mandei uma data invalida')
+      if (isNaN(converted.getTime())) {
+        this.logger.warn(`Invalid month filter received: "${query.month}"`)
+        throw new BadRequestException(`Mês inválido: "${query.month}". Use o formato MMM/AAAA, ex: SET/2024`)
       }
-      where.month = convertStringToDate(query.month)
+      where.month = converted
     }
     if (query.client) where.client = { clientNumber: Number(query.client) }
 

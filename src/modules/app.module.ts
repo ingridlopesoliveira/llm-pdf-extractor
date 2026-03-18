@@ -19,7 +19,7 @@ import configuration from '../configuration/configuration'
         type: 'postgres',
         url: config.get('database.url'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: config.get('ENV_MODE') === 'DEV',
         ssl: {
           rejectUnauthorized: false,
         },

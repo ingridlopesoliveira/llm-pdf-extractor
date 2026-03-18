@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { ResponseDTO } from 'src/dtos/response-dto'
 import { PdfUploadInterceptor } from 'src/interceptors/pdf-upload.interceptor'
 import { type InvoicesQueryDto, invoicesQuerySchema } from 'src/schema/invoice-query.schema'
@@ -13,11 +13,15 @@ export class FilesController {
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(PdfUploadInterceptor('files'))
   async upload(@UploadedFile() file: Express.Multer.File): Promise<ResponseDTO> {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo enviado')
+    }
     try {
       const response = await this.filesService.processFile(file.path)
       return new ResponseDTO(HttpStatus.CREATED, 'Arquivo processado com sucesso', response)
-    } catch (err) {
-      throw new BadRequestException('Erro ao processar o arquivo', err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new InternalServerErrorException('Erro ao processar o arquivo', message)
     }
   }
 
@@ -27,8 +31,9 @@ export class FilesController {
     try {
       const response = await this.filesService.getFilesData(query)
       return new ResponseDTO(HttpStatus.OK, 'Dados dos arquivos obtidos com sucesso', response)
-    } catch (err) {
-      throw new BadRequestException('Erro ao obter os dados dos arquivos', err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new InternalServerErrorException('Erro ao obter os dados dos arquivos', message)
     }
   }
 }

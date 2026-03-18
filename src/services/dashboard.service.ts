@@ -11,7 +11,7 @@ export class DashboardService {
   constructor(private invoicesRepository: InvoicesRepository) {}
 
   async aggregatedValuesByMonth(query: DashboardQueryDto): Promise<ListAggregatedInvoicesForDashboardDTO | ListAggregatedInvoicesDTO[]> {
-    this.logger.log('Recieved request to aggreagted values by month')
+    this.logger.log('Received request for aggregated values by month')
 
     const aggregatedValues = await this.invoicesRepository.getAggregatedValues(query)
 
@@ -19,7 +19,7 @@ export class DashboardService {
       const result: ListAggregatedInvoicesForDashboardDTO = {
         mes: [],
         energia_consumida: [],
-        energia_conpensada: [],
+        energia_compensada: [],
         valor_total_sem_gd: [],
         economia_gd: [],
       }
@@ -27,7 +27,7 @@ export class DashboardService {
       for (const row of aggregatedValues) {
         result.mes.push(row.month)
         result.energia_consumida.push(Number(row.totalEnergyConsume))
-        result.energia_conpensada.push(Number(row.totalEnergyCompensated))
+        result.energia_compensada.push(Number(row.totalEnergyCompensated))
         result.valor_total_sem_gd.push(Number(row.totalValueWithoutGd))
         result.economia_gd.push(Number(row.totalEconomyGd))
       }
@@ -39,7 +39,7 @@ export class DashboardService {
   }
 
   async getTotals(query: DashboardQueryDto): Promise<ListAggregatedInvoicesDTO> {
-    this.logger.log('Recieved request to get totals values')
+    this.logger.log('Received request for total values')
 
     const aggregatedValues = await this.invoicesRepository.getTotals(query)
     return new ListAggregatedInvoicesDTO(aggregatedValues)
